@@ -19,6 +19,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Build
+        id: build
         run: |
           sudo apt install build-essential cmake libncurses5-dev
           mkdir build && cd build
@@ -37,7 +38,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.tag.outputs.release_tag_p1 }}-${{ steps.tag.outputs.release_tag_p2 }}
+          tag_name: ${{ steps.build.outputs.release_tag_p1 }}-${{ steps.build.outputs.release_tag_p2 }}
           files: build/*.ipk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
