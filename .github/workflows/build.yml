@@ -27,7 +27,6 @@ jobs:
           tar -Jxvf $(ls)
           rm *.xz
           echo "::set-output name=release_tag_p1::$(ls)"
-          echo "::set-output name=release_tag_p2::$(date +"%Y-%m-%d_%H-%M")"
           mv $(ls) openwrt
           mkdir openwrt/package/scutclient
           cp ../openwrt/Makefile openwrt/package/scutclient
@@ -35,10 +34,12 @@ jobs:
           make defconfig
           make package/scutclient/compile V=s
           cp ./bin/packages/*/*/*.ipk ..
+          cd ..
+          echo "::set-output name=release_tag_p2::$(ls *.ipk)"
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.build.outputs.release_tag_p1 }}-${{ steps.build.outputs.release_tag_p2 }}
+          tag_name: ${{ steps.build.outputs.release_tag_p1 }}--${{ steps.build.outputs.release_tag_p2 }}
           files: build/*.ipk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
