@@ -25,6 +25,8 @@ jobs:
           wget ${{ github.event.inputs.sdk_url }}
           tar -Jxvf $(ls)
           rm *.xz
+          echo "::set-output name=release_tag_p1::$(ls)"
+          echo "::set-output name=release_tag_p2::$(date +"%Y-%m-%d_%H-%M")"
           mv $(ls) openwrt
           mkdir openwrt/package/scutclient
           cp ../openwrt/Makefile openwrt/package/scutclient
@@ -35,6 +37,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ steps.tag.outputs.release_tag_p1 }}-${{ steps.tag.outputs.release_tag_p2 }}
           files: build/*.ipk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
